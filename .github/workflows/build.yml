@@ -45,7 +45,7 @@ jobs:
         run: ./gradlew spotlessCheck
 
       - name: Build app
-        run: ./gradlew assembleStandardDebug -Puniversal
+        run: ./gradlew assembleDebug
 
       - name: Run unit tests
         id: unit_tests

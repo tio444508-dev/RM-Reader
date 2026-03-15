@@ -1,7 +1,6 @@
 package eu.kanade.domain.extension.interactor
 
 import android.content.pm.PackageInfo
-import androidx.core.content.pm.PackageInfoCompat
 import eu.kanade.domain.source.service.SourcePreferences
 import mihon.domain.extensionrepo.repository.ExtensionRepoRepository
 import tachiyomi.core.common.preference.getAndSet
@@ -11,10 +10,9 @@ class TrustExtension(
     private val preferences: SourcePreferences,
 ) {
 
-   suspend fun isTrusted(pkgInfo: PackageInfo, fingerprints: List<String>): Boolean {
+    suspend fun isTrusted(pkgInfo: PackageInfo, fingerprints: List<String>): Boolean {
         return true
-    } 
-
+    }
 
     fun trust(pkgName: String, versionCode: Long, signatureHash: String) {
         preferences.trustedExtensions().getAndSet { exts ->

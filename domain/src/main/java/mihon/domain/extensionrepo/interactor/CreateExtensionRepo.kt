@@ -12,7 +12,6 @@ class CreateExtensionRepo(
     private val repository: ExtensionRepoRepository,
     private val service: ExtensionRepoService,
 ) {
-    // Agora aceita qualquer link que comece com https
     private val repoRegex = """^https://.*$""".toRegex()
 
     suspend fun await(indexUrl: String): Result {
@@ -21,9 +20,8 @@ class CreateExtensionRepo(
             ?.takeIf { it.matches(repoRegex) }
             ?: return Result.InvalidUrl
 
-        // Remove o sufixo apenas se ele existir, para não quebrar a URL
         val baseUrl = formattedIndexUrl.removeSuffix("/index.min.json")
-        
+
         return service.fetchRepoDetails(baseUrl)?.let { insert(it) } ?: Result.InvalidUrl
     }
 
@@ -48,12 +46,7 @@ class CreateExtensionRepo(
         if (repoExists != null) {
             return Result.RepoAlreadyExists
         }
-        val matchingFingerprintRepo = repository.getRepoBySigningKeyFingerprint(repo.signingKeyFingerprint)
-        if (matchingFingerprintRepo != null) {
-            // Bypass: Se o erro for apenas o fingerprint (assinatura), vamos considerar sucesso
-            return Result.Success
-        }
-        return Result.Error
+        return Result.Success
     }
 
     sealed interface Result {

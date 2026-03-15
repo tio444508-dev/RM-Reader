@@ -7,7 +7,7 @@ import eu.kanade.tachiyomi.extension.model.LoadResult
 import eu.kanade.tachiyomi.extension.util.ExtensionLoader
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.network.NetworkHelper
-import eu.kanade.tachiyomi.network.awaitSuccess
+import eu.kanade.tachiyomi.network.await
 import eu.kanade.tachiyomi.network.parseAs
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -52,7 +52,7 @@ internal class ExtensionApi {
         return try {
             val response = networkService.client
                 .newCall(GET("$repoBaseUrl/index.min.json"))
-                .awaitSuccess()
+                .await() // Mudança aqui: await em vez de awaitSuccess
 
             with(json) {
                 response
@@ -69,14 +69,12 @@ internal class ExtensionApi {
         context: Context,
         fromAvailableExtensionList: Boolean = false,
     ): List<Extension.Installed>? {
-        // Limit checks to once a day at most
         if (!fromAvailableExtensionList &&
             Instant.now().toEpochMilli() < lastExtCheck.get() + 1.days.inWholeMilliseconds
         ) {
             return null
         }
 
-        // Update extension repo details
         updateExtensionRepo.awaitAll()
 
         val extensions = if (fromAvailableExtensionList) {
@@ -109,12 +107,7 @@ internal class ExtensionApi {
     }
 
     private fun List<ExtensionJsonObject>.toExtensions(repoUrl: String): List<Extension.Available> {
-        return this
-            .filter {
-                val libVersion = it.extractLibVersion()
-                libVersion >= ExtensionLoader.LIB_VERSION_MIN && libVersion <= ExtensionLoader.LIB_VERSION_MAX
-            }
-            .map {
+        return this.map {
                 Extension.Available(
                     name = it.name.substringAfter("Tachiyomi: "),
                     pkgName = it.pkg,
@@ -136,7 +129,11 @@ internal class ExtensionApi {
     }
 
     private fun ExtensionJsonObject.extractLibVersion(): Double {
-        return version.substringBeforeLast('.').toDouble()
+        return try {
+            version.substringBeforeLast('.').toDouble()
+        } catch (e: Exception) {
+            1.0 // Valor padrão se a versão estiver em formato estranho
+        }
     }
 }
 

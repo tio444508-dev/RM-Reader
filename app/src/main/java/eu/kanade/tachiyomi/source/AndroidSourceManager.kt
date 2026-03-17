@@ -32,13 +32,9 @@ class AndroidSourceManager(
 
     private val _isInitialized = MutableStateFlow(false)
     override val isInitialized: StateFlow<Boolean> = _isInitialized.asStateFlow()
-
     private val downloadManager: DownloadManager by injectLazy()
-
     private val scope = CoroutineScope(Job() + Dispatchers.IO)
-
     private val sourcesMapFlow = MutableStateFlow(ConcurrentHashMap<Long, Source>())
-
     private val stubSourcesMap = ConcurrentHashMap<Long, StubSource>()
 
     override val catalogueSources: Flow<List<CatalogueSource>> = sourcesMapFlow.map {
@@ -82,9 +78,7 @@ class AndroidSourceManager(
         }
     }
 
-    override fun get(sourceKey: Long): Source? {
-        return sourcesMapFlow.value[sourceKey]
-    }
+    override fun get(sourceKey: Long): Source? = sourcesMapFlow.value[sourceKey]
 
     override fun getOrStub(sourceKey: Long): Source {
         return sourcesMapFlow.value[sourceKey] ?: stubSourcesMap.getOrPut(sourceKey) {
@@ -93,9 +87,7 @@ class AndroidSourceManager(
     }
 
     override fun getOnlineSources() = sourcesMapFlow.value.values.filterIsInstance<HttpSource>()
-
     override fun getCatalogueSources() = sourcesMapFlow.value.values.filterIsInstance<CatalogueSource>()
-
     override fun getStubSources(): List<StubSource> {
         val onlineSourceIds = getOnlineSources().map { it.id }
         return stubSourcesMap.values.filterNot { it.id in onlineSourceIds }
@@ -113,9 +105,7 @@ class AndroidSourceManager(
     }
 
     private suspend fun createStubSource(id: Long): StubSource {
-        sourceRepository.getStubSource(id)?.let {
-            return it
-        }
+        sourceRepository.getStubSource(id)?.let { return it }
         extensionManager.getSourceData(id)?.let {
             registerStubSource(it)
             return it

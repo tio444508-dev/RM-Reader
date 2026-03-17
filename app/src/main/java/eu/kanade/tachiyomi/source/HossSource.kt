@@ -17,7 +17,7 @@ class HossSource : HttpSource() {
     override val lang = "pt-BR"
     override val supportsLatest = true
 
-    // Funções essenciais para o Android não dar erro de compilação
+    // Estas funções abaixo são o que o Android estava reclamando que não achava
     override fun popularMangaRequest(page: Int): Request = GET("$baseUrl/manga-list/", headers)
     override fun popularMangaParse(response: Response): MangasPage = MangasPage(emptyList(), false)
     override fun latestUpdatesRequest(page: Int): Request = GET(baseUrl, headers)
@@ -29,7 +29,6 @@ class HossSource : HttpSource() {
     override fun pageListParse(response: Response): List<Page> = emptyList()
     override fun imageUrlParse(response: Response): String = ""
 
-    // Sua lógica de extração
     fun extrairPaginas(document: Document): List<Page> {
         return document.select(".reading-content img").mapIndexed { index, element ->
             val urlImagem = element.attr("abs:data-src").ifEmpty { element.attr("abs:src") }

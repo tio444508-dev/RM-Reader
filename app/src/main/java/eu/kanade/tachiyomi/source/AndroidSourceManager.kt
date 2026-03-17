@@ -57,7 +57,6 @@ class AndroidSourceManager(
                                 Injekt.get(),
                                 Injekt.get(),
                             ),
-                            // ABAIXO: Registro da sua fonte interna Hoss
                             HossSource().id to HossSource(),
                         ),
                     )

@@ -57,7 +57,6 @@ class AndroidSourceManager(
                                 Injekt.get(),
                                 Injekt.get(),
                             ),
-                            HossSource().id to HossSource(),
                         ),
                     )
                     extensions.forEach { extension ->

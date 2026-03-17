@@ -9,7 +9,6 @@ import eu.kanade.tachiyomi.source.online.HttpSource
 import okhttp3.Request
 import okhttp3.Response
 import org.jsoup.nodes.Document
-import rx.Observable
 
 class HossSource : HttpSource() {
     override val id: Long = 1234567890L
@@ -18,7 +17,7 @@ class HossSource : HttpSource() {
     override val lang = "pt-BR"
     override val supportsLatest = true
 
-    // --- CONFIGURAÇÕES OBRIGATÓRIAS PARA COMPILAR ---
+    // Funções que o motor do app exige para aceitar o arquivo
     override fun popularMangaRequest(page: Int): Request = GET("$baseUrl/manga-list/", headers)
     override fun popularMangaParse(response: Response): MangasPage = MangasPage(emptyList(), false)
     override fun latestUpdatesRequest(page: Int): Request = GET(baseUrl, headers)
@@ -30,7 +29,7 @@ class HossSource : HttpSource() {
     override fun pageListParse(response: Response): List<Page> = emptyList()
     override fun imageUrlParse(response: Response): String = ""
 
-    // --- SUA LÓGICA DE EXTRAÇÃO DE PÁGINAS ---
+    // Sua lógica de pegar as imagens (que vamos usar no teste)
     fun extrairPaginas(document: Document): List<Page> {
         return document.select(".reading-content img").mapIndexed { index, element ->
             val urlImagem = element.attr("abs:data-src").ifEmpty { element.attr("abs:src") }

@@ -55,7 +55,10 @@ class AndroidSourceManager(
                                 context,
                                 Injekt.get(),
                                 Injekt.get(),
+                                Injekt.get(),
                             ),
+                            // ABAIXO: Registro da sua fonte interna Hoss
+                            HossSource().id to HossSource(),
                         ),
                     )
                     extensions.forEach { extension ->

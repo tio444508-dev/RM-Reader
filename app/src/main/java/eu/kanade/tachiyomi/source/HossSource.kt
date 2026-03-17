@@ -17,7 +17,7 @@ class HossSource : HttpSource() {
     override val lang = "pt-BR"
     override val supportsLatest = true
 
-    // Funções que o motor do app exige para aceitar o arquivo
+    // Funções obrigatórias para o motor do app aceitar o arquivo e compilar
     override fun popularMangaRequest(page: Int): Request = GET("$baseUrl/manga-list/", headers)
     override fun popularMangaParse(response: Response): MangasPage = MangasPage(emptyList(), false)
     override fun latestUpdatesRequest(page: Int): Request = GET(baseUrl, headers)
@@ -29,7 +29,7 @@ class HossSource : HttpSource() {
     override fun pageListParse(response: Response): List<Page> = emptyList()
     override fun imageUrlParse(response: Response): String = ""
 
-    // Sua lógica de pegar as imagens (que vamos usar no teste)
+    // Sua lógica de extração
     fun extrairPaginas(document: Document): List<Page> {
         return document.select(".reading-content img").mapIndexed { index, element ->
             val urlImagem = element.attr("abs:data-src").ifEmpty { element.attr("abs:src") }

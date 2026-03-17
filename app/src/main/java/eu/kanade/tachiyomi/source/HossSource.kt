@@ -18,7 +18,7 @@ class HossSource : HttpSource() {
     override val lang = "pt-BR"
     override val supportsLatest = true
 
-    // --- CONFIGURAÇÕES OBRIGATÓRIAS PARA O APP NÃO DAR ERRO ---
+    // --- CONFIGURAÇÕES OBRIGATÓRIAS PARA COMPILAR ---
     override fun popularMangaRequest(page: Int): Request = GET("$baseUrl/manga-list/", headers)
     override fun popularMangaParse(response: Response): MangasPage = MangasPage(emptyList(), false)
     override fun latestUpdatesRequest(page: Int): Request = GET(baseUrl, headers)
